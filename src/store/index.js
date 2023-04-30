@@ -16,7 +16,7 @@ export default new Vuex.Store({
     email: null,
     userId:null,
     userRole:'',
-    url: 'http://localhost:3000'
+    url: 'https://server-live-production.up.railway.app'
   },
   mutations: {
     setLogin(state,payload){
