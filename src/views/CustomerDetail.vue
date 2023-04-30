@@ -223,7 +223,7 @@ export default {
         },        
         fetchClub(){
             axios({
-                url: `http://localhost:3000/club/${this.$route.params.id}`,
+                url: `https://server-live-production.up.railway.app/club/${this.$route.params.id}`,
                 method: 'get',
                 })
                 .then(({data})=>{

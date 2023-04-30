@@ -16,6 +16,11 @@ const routes = [
     component: () => import('../views/Item.vue')
   },
   {
+    path: '/item/detail/:id',
+    name: 'item detail',
+    component: () => import('../views/ItemDetail.vue')
+  },  
+  {
     path: '/kategori',
     name: 'kategori',
     component: () => import('../views/Kategori.vue')
@@ -40,6 +45,11 @@ const routes = [
     name: 'customer',
     component: () => import('../views/Customer.vue')
   },
+  {
+    path: '/shift',
+    name: 'shift',
+    component: () => import('../views/LapShift.vue')
+  },  
   {
     path: '/customer/detail/:id',
     name: 'customer detail',

@@ -60,7 +60,7 @@
               small
               dark
               style="margin-top: 10px;"
-              @click.prevent="getByDate()"
+              @click.prevent="getByKategori()"
               >
               Cari
               </v-btn>  
@@ -246,6 +246,27 @@
               }
               return al;
           },         
+          getByKategori(){     
+                this.fillLoading(true)
+                this.fillData([])
+                axios({
+                    url: `https://server-live-production.up.railway.app/item/kategori?kat=${this.kategoriPilih}&kaca=${this.merkKacaPilih}&mobil=${this.merkMobilPilih}`,
+                    method: 'get',
+                    headers:{
+                        token : localStorage.getItem('token')
+                    }
+                })      
+                        .then(({data})=>{      
+                            this.fillLoading(false)   
+                            this.fillTotal(data.Total)
+                            this.fillData(data.results)
+                        })
+                        .catch(err=>{
+                            this.fillLoading(false)   
+                            console.log('eror')
+                            console.log(err)
+                        })
+            },          
           search(page){          
               if(this.src === ''){
                       this.fetchItem(1,10)

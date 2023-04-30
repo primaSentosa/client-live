@@ -1,10 +1,10 @@
 <template>
     <div class="container">
         <div class="col-12">
-            <div class="main-bar border p-3">      
+            <div class="main-bar border p-3" v-if="!showForm">      
                 <div class="grid border-bottom pb-3 d-flex justify-content-center">
                     <div style="margin-top:20px">
-                        <h3>SUPPLIER</h3>
+                        <h3>ITEM</h3>
                     </div>
                 </div>  
 
@@ -12,14 +12,17 @@
                     <div class="col-12 post-layout-center pt-2">
                         <div class="created">
                             <div class="by-user">
-                                <p class="date">Nama : <span class="name"> {{data.nama}}</span></p>
+                                <p class="date">Nama Barang : <span class="name"> {{data.nama}}</span></p>
                             </div>             
                             <div class="by-user">
-                                <p class="date">No Telpon : <span class="name"> {{data.noHp}}</span></p>
+                                <p class="date">Stok : <span class="name"> {{data.stok}}</span></p>
                             </div>                                                         
                             <div class="by-user">
-                                <p class="date">Alamat : <span class="name"> {{data.alamat}}</span></p>
-                            </div>                                
+                                <p class="date">Kode Barang : <span class="name"> {{data.kodeBarang}}</span></p>
+                            </div>     
+                            <div class="by-user">
+                                <p class="date">Total Barang Terjual: <span class="name"> {{this.terjual}} pcs</span></p>
+                            </div>                                                             
                         </div>
                     </div>
                 </div>
@@ -27,11 +30,11 @@
 
                 <div style="margin-top:20px">
                     <v-tabs color="red accent-4" left >
-                    <v-tab :href="History" @click="fetchHistory()">History Pembelian</v-tab>                                      
+                    <v-tab :href="History">History Laku</v-tab>                                    
 
                     <!-- History -->
-                    <v-tab-item :value="History" >                 
-                        <!-- tabel pembelian -->
+                    <v-tab-item :value="History" > 
+                        <!-- tabel penjualan -->
                         <v-simple-table
                                 fixed-header
                                 height="400px"
@@ -39,64 +42,48 @@
                             <template v-slot:default >
                             <thead>
                                 <tr>
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Tanggal</h5>
-                                </th>       
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Jam</h5>
-                                </th>                                          
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Admin</h5>
-                                </th>
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Customer</h5>
-                                </th>
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Metode</h5>
-                                </th>         
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Total Harga</h5>
-                                </th>
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Item</h5>
-                                </th>                                        
+                                    <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
+                                        <h5>Tanggal</h5>
+                                    </th>       
+                                    <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
+                                        <h5>Jam</h5>
+                                    </th>                                          
+                                    <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
+                                        <h5>Admin</h5>
+                                    </th>
+                                    <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
+                                        <h5>Customer</h5>
+                                    </th>
+                                    <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
+                                        <h5>Metode</h5>
+                                    </th>                              
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr
-                                v-for="item in allData"
-                                :key="item._id"
-                                @click="openFormEdit(item)"
+                                    v-for="item in allHistory"
+                                    :key="item._id"
+                                    @click="openFormEdit(item)"
                                 >           
-                                <td>{{ item.tanggal }}</td>
-                                <td>{{ item.jam }}</td>
-                                <td>{{ item.admin.username }}</td>
-                                <td>{{ item.customer.nama }}</td>
-                                <td>
-                                    <b-badge variant="success" class="lg" v-if="item.metode === 'Tunai'">TUNAI</b-badge>          
-                                    <b-badge variant="danger" class="lg" v-if="item.metode === 'Bon'">BON</b-badge>    
-                                </td>
-                                <td>Rp {{ getRp( item.totalHarga) }}</td>
-                                <td>
-                                    <v-btn
-                                    rounded                      
-                                    small
-                                    dark
-                                    @click.prevent="openList(item.listItem)"
-                                    >
-                                    ALL ITEM
-                                    </v-btn>  
-                                </td>
-                                
+                                    <td>{{ item.tanggal }}</td>
+                                    <td>{{ item.jam }}</td>
+                                    <td>{{ item.admin.username }}</td>
+                                    <td v-if="item.customer">{{ item.customer.nama }}</td>
+                                    <td v-if="!item.customer">-</td>
+                                    <td>
+                                        <b-badge variant="success" class="lg" v-if="item.metode === 'Tunai'">TUNAI</b-badge>          
+                                        <b-badge variant="danger" class="lg" v-if="item.metode === 'Bon'">BON</b-badge>    
+                                    </td>                                
                                 </tr>
                             </tbody>
                             </template>
                         </v-simple-table>   
-                        <!-- tabel pembelian -->
+                        <!-- tabel penjualan -->
                     </v-tab-item>                
                     <!-- History -->
                     </v-tabs>
-                </div>
+                </div>                    
+
             </div>
         </div>
     </div>
@@ -123,10 +110,15 @@ export default {
     },
     data() {
         return {
+            dialog: false,
+            dialog2: false,
+            showForm: false,
+            showLoading: false,
             formEdit: false,
             data: '',             
-            allItem: [],
-
+            allSupplier: [],
+            allHistory: [],
+            terjual: 0
         }
     },
     methods:{  
@@ -145,13 +137,22 @@ export default {
             this.imageData = event.target.files[0];
             this.onUpload()
         },        
-        fetchClub(){
+        fetchItem(){            
             axios({
-                url: `https://server-live-production.up.railway.app/club/${this.$route.params.id}`,
+                url: `https://server-live-production.up.railway.app/item/detail/${this.$route.params.id}`,
                 method: 'get',
                 })
                 .then(({data})=>{
-                    this.data = data
+                    data.laku.forEach(element => {
+                        element.listItem.forEach(element2 =>{
+                            if(element2._id === data.item._id){
+                                this.terjual += element2.qty
+                            }
+                        })
+                    });                       
+                    this.data = data.item
+                    this.allHistory = data.laku
+                    console.log(data)
                 })
                 .catch(err=>{
                     console.log(err)
@@ -160,7 +161,7 @@ export default {
        
     },
     created(){
-
+        this.fetchItem()
     }
 
 }
@@ -217,7 +218,7 @@ label{
   color: #9199a1;
 }
 .by-user .name {
-  color: #cc0000;
+  color: #000000;
 }
 /* .css-1hwy0bb:hover{
   transform: scale(1.05)

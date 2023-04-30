@@ -21,7 +21,7 @@ const actions = {
       context.commit('fillLoading',true)
       context.commit('fillData',[])
       axios({
-        url: `http://localhost:3000/user/admin`,
+        url: `https://server-live-production.up.railway.app/user/admin`,
         method: 'get',
         headers:{
             token : localStorage.getItem('token')

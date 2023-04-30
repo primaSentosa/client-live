@@ -50,6 +50,7 @@ const actions = {
     let tempItem = []
     await payload.listItem.forEach(element => {
       let temp = {
+        idBarang: element._id,
         kodeBarang: element.kodeBarang,
         nama: element.nama,
         qty: Number(element.qty),
@@ -64,7 +65,7 @@ const actions = {
     console.log(tempItem)
     console.log(payload.kasir.userId)
     axios({
-      url: `http://localhost:3000/transaksi/pembelian`,
+      url: `https://server-live-production.up.railway.app/transaksi/pembelian`,
       method: 'post',
       headers:{
           token : localStorage.getItem('token')

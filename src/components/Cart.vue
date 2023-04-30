@@ -130,7 +130,7 @@
                     <v-col cols="12" md="5">                  
                         <v-text-field
                             v-if="supName"
-                            :value="supName.nama"
+                            :value="supName"
                             label="Supplier"
                             readonly
                         ></v-text-field>    
@@ -180,6 +180,7 @@
                     <v-simple-table
                             fixed-header
                             height="400px"
+                            v-if="loading === false"
                         >
                             <template v-slot:default >
                             <thead>
@@ -189,52 +190,49 @@
                                 </th>
                                 <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
                                     <h5>Alamat</h5>
-                                </th>
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Nomor Telp</h5>
-                                </th>
-                                <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
-                                    <h5>Email</h5>
-                                </th>                         
+                                </th>             
                                 <th class="text-left" style="color:#000000;background-color: #d4d4d4;">
                                     <h5>Action</h5>
                                 </th>                                                            
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody >
                                 <tr
                                 v-for="item in allSupplier"
-                                :key="item._id"
-                                
+                                :key="item._id"                                
                                 >
                                 <td @click="">{{ item.nama }}</td>
-                                <td @click="">{{ item.alamat }}</td>
-                                <td @click="">{{ item.noHp }}</td>
-                                <td @click="">{{ item.email }}</td>               
+                                <td @click="">{{ item.alamat }}</td>             
                                 <td>
-                                <v-btn
-                                rounded                      
-                                small
-                                dark
-                                @click.prevent="openFormEdit(item)"
+                                <a
+                                v-if="item.nama !== '-'"
+                                @click.prevent="addSupplier(item)"
                                 >
-                                EDIT
-                                </v-btn>  
-                                <v-btn
-                                style="margin-left: 10px;"
-                                rounded
-                                color="#a30606"
-                                small
-                                dark
-                                @click.prevent="deleteSup(item._id)"
-                                >
-                                DELETE
-                                </v-btn>                        
+                                    <v-icon color="green" dense>mdi-check-circle-outline</v-icon>                                    
+                                </a>                        
                                 </td>
                                 </tr>
                             </tbody>
                             </template>
                         </v-simple-table>   
+                            <!-- loading -->
+                            <v-container style="height: 400px;" v-if="loading">            
+                            <v-row
+                                class="fill-height"
+                                align-content="center"
+                                justify="center"
+                            >
+                                <v-col cols="6">
+                                    <p>LOADING</p>
+                                    <v-progress-circular
+                                    indeterminate
+                                    color="primary"
+                                    v-if="loading"
+                                    ></v-progress-circular>
+                                </v-col>
+                            </v-row>
+                            </v-container> 	
+                            <!-- loading -->                        
                     <!-- tabel supplier -->                    
                 </v-row>               
               </v-container>
@@ -266,9 +264,14 @@
                         total: 0,
                         pembayaran: 'Tunai'
                     },
+                    loading:false,
                     src:"",
                     supName:null,
-                    allSupplier:[]
+                    supId:null,
+                    allSupplier:[{
+                        nama: '-',
+                        alamat: 'KOSONG'
+                    }]
                 }
             },
             methods: {
@@ -314,7 +317,7 @@
                                     let tempItem = []
                                     await this.items.forEach(element => {
                                     let temp = {
-                                        _id: element.id,
+                                        idBarang: element.id,
                                         kodeBarang: element.kodeBarang,
                                         nama: element.nama,
                                         qty: Number(element.qty),
@@ -324,39 +327,39 @@
                                     tempItem.push(temp)
                                     });
                                     let tempData = {
-                                        admin: this.userId,
                                         listItem: tempItem,
                                         totalHarga: this.transaksi.total,          
                                         metode: this.transaksi.pembayaran                   
                                     }
 
                                     if(this.supName){
-                                        tempData.supplier = this.supName._id
+                                        tempData.supplier = this.supId
                                     }
                                     console.log(tempData)
 
-                                    // axios({
-                                    // url: `http://localhost:3000/transaksi/pembelian`,
-                                    // method: 'post',
-                                    // headers:{
-                                    //     token : localStorage.getItem('token')
-                                    // },
-                                    // data: tempData
-                                    // })
-                                    //     .then(({data}) =>{                                    
-                                    //         this.dialog = false
-                                    //         this.supName = null
-                                    //         this.fillItem(false)
-                                    //     })
-                                    //     .catch(err=>{
-                                    //         Swal.fire({
-                                    //             icon: 'error',
-                                    //             title: 'internal server error !',
-                                    //             text: err.errors,
-                                    //         })                
-                                    //     })                                                       
+                                    axios({
+                                    url: `https://server-live-production.up.railway.app/transaksi/pembelian`,
+                                    method: 'post',
+                                    headers:{
+                                        token : localStorage.getItem('token')
+                                    },
+                                    data: tempData
+                                    })
+                                        .then(({data}) =>{                                    
+                                            this.dialog = false
+                                            this.supName = null
+                                            this.supId = null
+                                            this.fillItem(false)
+                                        })
+                                        .catch(err=>{
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'internal server error !',
+                                                text: err.errors,
+                                            })                
+                                        })                                                       
                                 } else if (result.isDenied) {
-                                        
+                                        this.dialog = false
                                 }
                             })      
                 },
@@ -389,8 +392,12 @@
                         return '-'
                     }
                 },
-                searchSupplier(page){                 
-                    this.allSupplier = []
+                searchSupplier(page){       
+                    this.loading = true
+                    this.allSupplier = [{
+                        nama: '-',
+                        alamat: 'KOSONG'
+                    }]
                     axios({
                         url: `${this.$store.state.url}/supplier/search?src=${this.src}`,
                         method: 'get',
@@ -398,17 +405,28 @@
                             token : localStorage.getItem('token')
                         }
                     })      
-                        .then(({data})=>{                                         
-                            this.allSupplier = data.results
+                        .then(({data})=>{    
+                            this.loading = false   
+                            if(data.Total > 1){
+                                this.allSupplier = data.results
+                            }                                  
                             if(data.Total === 1){
-                                this.supName = data.results[0]
-                            }                                                                        
+                                this.allSupplier = data.results
+                                this.supName = data.results[0].nama
+                                this.supId = data.result[0]._id
+                            }
+
                         })
                         .catch(err=>{
+                            this.loading = false
                             console.log(err)
                         })        
                       
-                },                     
+                },      
+                addSupplier(item){
+                    this.supName = item.nama
+                    this.supId = item._id
+                }               
             },
             computed: {
                 userName(){

@@ -76,20 +76,28 @@
               }
               })
               .then(({data})=>{
-                  this.email = ''
-                  this.password = ''
-                  localStorage.setItem('token',data.token)
-                  localStorage.setItem('user',data.user.username)  
-                  localStorage.setItem('email',data.user.email)                
-                  localStorage.setItem('userId',data.user._id)                
-                  localStorage.setItem('role',data.user.role)
-                  this.$store.commit('setUser',data.user.username)
-                  this.$store.commit('setEmail',data.user.email)
-                  this.$store.commit('setUserId',data.user._id)    
-                  this.$store.commit('setRole',data.user.role)    
-                       
-                  this.$router.push('/')
-                  this.$store.commit('setLogin',true)
+                if(data.user.role === 'Super'){
+                    this.email = ''
+                    this.password = ''
+                    localStorage.setItem('token',data.token)
+                    localStorage.setItem('user',data.user.username)  
+                    localStorage.setItem('email',data.user.email)                
+                    localStorage.setItem('userId',data.user._id)                
+                    localStorage.setItem('role',data.user.role)
+                    this.$store.commit('setUser',data.user.username)
+                    this.$store.commit('setEmail',data.user.email)
+                    this.$store.commit('setUserId',data.user._id)    
+                    this.$store.commit('setRole',data.user.role)    
+                         
+                    this.$router.push('/')
+                    this.$store.commit('setLogin',true)
+                }else{
+                    Swal.fire({
+                    icon: 'error',
+                    title: 'Not Authorized !',
+                    text: err.errors,
+                  })
+                }
               })
               .catch(err=>{
                 if(err.response.status === 401){

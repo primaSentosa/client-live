@@ -86,7 +86,7 @@
                 small
                 dark
                 style="margin-top: 10px;"
-                @click.prevent="getByDate()"
+                @click.prevent="getByKategori()"
                 >
                 Cari
                 </v-btn>  
@@ -165,34 +165,43 @@
                 <p>Rp {{getRp( item.harga)}}</p>
                 </template>  
                 <template v-slot:item.kategori="{ item }">
-                <p v-if="item.kategori">Rp {{getRp( item.kategori.nama)}}</p>
+                <p v-if="item.kategori">{{item.kategori.nama}}</p>
                 </template>  
                 <template v-slot:item.actions="{ item }">
                     <v-btn
                         variant="outlined"
-                        color="primary"  
+                        color="green"  
                         size="x-small"
-                        icon    
                         @click="openFormEdit(item)"
                     >
-                        <v-icon color="green" v-b-popover.hover.top="'Edit Item'" small>mdi-file-document-edit</v-icon>
-                    </v-btn>      
+                        <a v-b-popover.hover.top="'Edit Item'">EDIT</a>
+                    </v-btn>                       
+                    
+                    <v-btn
+                        variant="outlined"
+                        color="primary"  
+                        size="x-small"             
+                        @click="$router.push(`/item/detail/${item._id}`)"
+                        style="margin-left: 10px;"
+                    >
+                        <a>DETAIL</a>
+                    </v-btn>  
 
                     <v-btn
                         variant="outlined"
                         color="primary"  
                         size="x-small"
                         icon                   
-                        @click="deleteItem(item._id)"
+                        @click="deleteItem(item._id)"                        
                     >
                         <v-icon color="red" v-b-popover.hover.top="'Delete Item'" small>mdi-delete</v-icon>
-                    </v-btn>                    
+                    </v-btn>   
                 </template>    
             </v-data-table>            
           <!-- tabel item -->
           
           <!-- loading -->
-          <v-container style="height: 400px;" v-if="loading">            
+          <!-- <v-container style="height: 400px;" v-if="loading">            
             <v-row
                 class="fill-height"
                 align-content="center"
@@ -207,7 +216,7 @@
                 ></v-progress-linear>
                 </v-col>
             </v-row>
-          </v-container> 	
+          </v-container> 	 -->
           <!-- loading -->
 
 
@@ -556,6 +565,7 @@
                 fetchMerkMobil: 'kategori/fetchMerkMobil',
                 fetchMerkKaca: 'kategori/fetchMerkKaca'
             }),               
+
             getRp(text){
                 if(text){
                     var number_string = text.toString()
@@ -612,6 +622,27 @@
                 this.deskripsi = item.deskripsi
                 this.dialog2 = true
             },
+            getByKategori(){     
+                this.fillLoading(true)
+                this.fillData([])
+                axios({
+                    url: `https://server-live-production.up.railway.app/item/kategori?kat=${this.kategoriPilih}&kaca=${this.merkKacaPilih}&mobil=${this.merkMobilPilih}`,
+                    method: 'get',
+                    headers:{
+                        token : localStorage.getItem('token')
+                    }
+                })      
+                        .then(({data})=>{      
+                            this.fillLoading(false)   
+                            this.fillTotal(data.Total)
+                            this.fillData(data.results)
+                        })
+                        .catch(err=>{
+                            this.fillLoading(false)   
+                            console.log('eror')
+                            console.log(err)
+                        })
+            },
             search(page){          
                 if(this.src === ''){
                         this.fetchItem(1,this.perPage)
@@ -631,9 +662,7 @@
                         .then(({data})=>{               
                             this.fillTotal(data.Total)
                             this.fillData(data.results)
-                            this.fillLoading(false)
-
-                                                                        
+                            this.fillLoading(false)                                                                        
                         })
                         .catch(err=>{
                             console.log(err)
@@ -689,7 +718,6 @@
                     })
                     .catch(err=>{
                             this.loading2 = false
-                            console.log()
                             if(err.response.data.errors[0] === 'kode sudah terdaftar !'){
                                 Swal.fire({
                                 icon: 'error',
@@ -833,7 +861,6 @@
         this.fetchMerkMobil()
         this.fetchMerkKaca()
         this.fetchItem(1,10)
-        console.log(this.loading)
       }
     }
   </script>

@@ -21,7 +21,7 @@ const actions = {
       context.commit('fillLoading',true)
       context.commit('fillData',[])
       axios({
-        url: `http://localhost:3000/supplier`,
+        url: `https://server-live-production.up.railway.app/supplier`,
         method: 'get',
         headers:{
             token : localStorage.getItem('token')
