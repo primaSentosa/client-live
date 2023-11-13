@@ -244,7 +244,7 @@
           fetchAllShift(){
               this.allShift = []
               axios({
-                  url: `https://server-live-production.up.railway.app/shift?mulai=${this.date1}&akhir=${this.date2}`,
+                  url: `https://server-live-d54d413311de.herokuapp.com/shift?mulai=${this.date1}&akhir=${this.date2}`,
                   method: 'get',
                   headers:{
                       token : localStorage.getItem('token')

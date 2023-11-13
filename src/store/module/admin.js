@@ -21,14 +21,13 @@ const actions = {
       context.commit('fillLoading',true)
       context.commit('fillData',[])
       axios({
-        url: `https://server-live-production.up.railway.app/user/admin`,
+        url: `https://server-live-d54d413311de.herokuapp.com/user/admin`,
         method: 'get',
         headers:{
             token : localStorage.getItem('token')
         }
       })      
             .then(({data})=>{       
-                console.log(data)
                     if(state.allItem.length <= 0){
                       context.commit('fillData',data.results)
                       context.commit('fillTotal',data.Total)

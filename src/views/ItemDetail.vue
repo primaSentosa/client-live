@@ -139,7 +139,7 @@ export default {
         },        
         fetchItem(){            
             axios({
-                url: `https://server-live-production.up.railway.app/item/detail/${this.$route.params.id}`,
+                url: `https://server-live-d54d413311de.herokuapp.com/item/detail/${this.$route.params.id}`,
                 method: 'get',
                 })
                 .then(({data})=>{

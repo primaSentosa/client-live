@@ -147,7 +147,7 @@ export default {
         },        
         fetchClub(){
             axios({
-                url: `https://server-live-production.up.railway.app/club/${this.$route.params.id}`,
+                url: `https://server-live-d54d413311de.herokuapp.com/club/${this.$route.params.id}`,
                 method: 'get',
                 })
                 .then(({data})=>{

@@ -328,19 +328,11 @@
                     .catch(err=>{
                             this.loading2 = false
                             console.log()
-                            if(err.response.data.errors[0] === 'kode sudah terdaftar !'){
-                                Swal.fire({
-                                icon: 'error',
-                                title: 'kode sudah terdaftar !',
-                                text: err.errors,
-                                })                        
-                            }else{
                                 Swal.fire({
                                 icon: 'error',
                                 title: 'isi data dengan lengkap !',
                                 text: err.errors,
-                                })         
-                            }
+                                })                                 
                     })    
 
             },
