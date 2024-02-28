@@ -162,10 +162,10 @@
                 :per-page="perPage"
             >  
                 <template v-slot:item.harga="{ item }">
-                <p>Rp {{getRp( item.harga)}}</p>
+                    <p>Rp {{getRp( item.harga)}}</p>
                 </template>  
                 <template v-slot:item.kategori="{ item }">
-                <p v-if="item.kategori">{{item.kategori.nama}}</p>
+                    <p v-if="item.kategori">{{item.kategori.nama}}</p>
                 </template>  
                 <template v-slot:item.actions="{ item }">
                     <v-btn

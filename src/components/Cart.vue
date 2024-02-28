@@ -259,7 +259,7 @@
             data(){
             return {
                     dialog: false,
-                    pembayaran: ['Tunai', 'Bon'],
+                    pembayaran: ['Tunai', 'Bon', 'Transfer'],
                     transaksi:{
                         total: 0,
                         pembayaran: 'Tunai'

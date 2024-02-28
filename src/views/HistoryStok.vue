@@ -140,7 +140,7 @@
       data() {
         return {
             // search
-            allMetode:['Laku','Beli','Retur','Semua'],
+            allMetode:['Laku','Beli','Semua'],
             metode:'Semua',
             src: '',
             date: [(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)],
@@ -218,7 +218,7 @@
                 this.allData = []
                 this.loading = true
                 axios({
-                    url: `${this.$store.state.url}/item/search/date/history?mulai=${this.date[0]}&akhir=${this.date[1]}`,
+                    url: `${this.$store.state.url}/item/search/date/history?mulai=${this.date[0]}&akhir=${this.date[1]}&action=${this.metode}`,
                     method: 'get',
                     headers:{
                         token : localStorage.getItem('token')
